@@ -46,10 +46,4 @@ class schedule_approval extends Model
         return schedule_approval::where("schedule_id", $id)->orderBy('id', 'desc')->first();
     }
 
-
-
-
-
-
-
 }

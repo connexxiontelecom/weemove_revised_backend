@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Year;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Constraint\Count;
 use function PHPUnit\Framework\isEmpty;
 
@@ -34,8 +35,16 @@ class TrainingSchedule extends Model
          return $this->hasMany(Nomination::class, 'nm_training_id', 'id');
 
     }
-    public function approvals(){
-        return $this->hasMany(schedule_approval::class, 'schedule_id', 'id');
+    public function approvals($id){
+       // return $this->hasMany(schedule_approval::class, 'schedule_id', 'id');
+        $approvals =  DB::table('schedule_approvals')
+            ->join('employees', 'employees.id', '=', 'schedule_approvals.approver_id')
+            ->select('employees.id as e_id', 'employees.*', 'schedule_approvals.*')
+            ->where(function ($query) use($id){
+                $query->where('schedule_approvals.schedule_id', '=', $id);
+            })->get();
+
+      return $approvals;
 
     }
 

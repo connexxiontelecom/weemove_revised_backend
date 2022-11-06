@@ -40,6 +40,10 @@ class NominationController extends Controller
            $nomination->NominatedBy;
            $nomination->NominatedEmployee;
            $nomination->year;
+           $approvals = $nomination->approvals;
+           foreach ($approvals as $approval) {
+               $approval->employee =  $this->employee::find($approval->approver_id);
+           }
        }
         if ($nominations) {
             return response()->json($nominations, 200);
@@ -57,19 +61,15 @@ class NominationController extends Controller
         }
     }
 
-    public function approveNomination(Request $request, $id)
+    public function approveNomination(Request $request)
     {
-        $nomination = Nomination::find($id);
-        $nomination->nm_status = 2;
-        $nomination->save();
-        return $this->getNominations();
+        $result = $this->nomination->approveNomination($request->all());
+        return response()->json($result, 200);
     }
 
-    public function declineNomination(Request $request, $id){
-        $nomination = Nomination::find($id);
-        $nomination->nm_status = 3;
-        $nomination->save();
-        return $this->getNominations();
+    public function declineNomination(Request $request){
+        $result = $this->nomination->declineNomination($request->all());
+        return response()->json($result, 200);
     }
 
     public function getNominee(Request $request, $id){

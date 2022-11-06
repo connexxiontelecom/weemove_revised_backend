@@ -61,8 +61,8 @@ $router->group(['prefix'=>'api'], function () use ($router) {
     $router->post('nomination/create', 'NominationController@createNomination');
     $router->get('nomination/all-nominations', 'NominationController@getNominations');
     $router->get('nomination/nominations/{id}', 'NominationController@getNominationsById');
-    $router->get('nomination/nominations/approve/{id}', 'NominationController@approveNomination');
-    $router->get('nomination/nominations/decline/{id}', 'NominationController@declineNomination');
+    $router->post('nomination/nominations/approve', 'NominationController@approveNomination');
+    $router->post('nomination/nominations/decline', 'NominationController@declineNomination');
 
     $router->get('nomination/nominations/nominees/{id}', 'NominationController@getNominee');
     $router->post('nomination/participants/evaluate', 'NominationController@updateNominee');

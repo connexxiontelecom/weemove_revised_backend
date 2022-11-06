@@ -70,7 +70,7 @@ class TrainingScheduleController extends Controller
             $schedule->createdBy;
             $schedule->year;
             $schedule->department;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
         }
         return response()->json($schedules, 200);
     }
@@ -100,7 +100,7 @@ class TrainingScheduleController extends Controller
             $schedule->year;
             $schedule->department;
             $schedule->approvedBy;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
         }
         return response()->json($schedules, 200);
     }
@@ -116,7 +116,7 @@ class TrainingScheduleController extends Controller
             $schedule->year;
             $schedule->department;
             $schedule->approvedBy;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
         }
         return response()->json($schedules, 200);
     }
@@ -150,7 +150,7 @@ class TrainingScheduleController extends Controller
             $schedule->createdBy;
             $schedule->year;
             $schedule->department;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
         }
         return response()->json($schedules, 200);
     }
@@ -163,7 +163,7 @@ class TrainingScheduleController extends Controller
             $schedule->createdBy;
             $schedule->year;
             $schedule->department;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
         }
         return response()->json($schedules, 200);
     }
@@ -177,7 +177,7 @@ class TrainingScheduleController extends Controller
             $schedule->department;
             $schedule->files;
             $schedule->nominees;
-            $schedule->approvals;
+            $schedule->approvals = $this->schedule->approvals($schedule->id);
             $schedule->ts_nominees =  count($schedule->nominees);
             foreach ($schedule->files as $file)
             {
