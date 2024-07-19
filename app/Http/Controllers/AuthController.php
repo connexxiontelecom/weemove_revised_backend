@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Auth;
 use App\Models\User;
+use App\Models\Driver;
+use App\Models\Vehicle;
 use App\Models\Permissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,76 +18,54 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->user = new User();
-        $this->permissions = new Permissions();
-    }
-
-    public function createEmployee(Request $request)
-    {
-        $this->validate($request, [
-            'fullname' => 'required',
-            'password' => 'required',
-            'phone' => 'required',
-            'username' => 'required|string',
-        ]);
-
-
-        $exists = User::where("email", $request->input('username'))->first();
-
-        if ($exists != null) {
-            return response()->json('email is taken already', 200);
-        } else {
-            //return response()->json(['message' => 'email is not taken already'], 409);
-            $user = new User;
-            $user->name = $request->input('name');
-            $user->username = $request->input('username');
-            $user->phone = $request->input('phone');
-            $plainPassword = $request->input('password');
-            $user->password = app('hash')->make($plainPassword);
-            $user->uuid = substr(sha1(time()), 28, 40);
-            $user->save();
-            return response()->json('Registration Successfull', 200);
-        }
-
+        $this->driver = new Driver();
+        $this->vehicle = new Vehicle();
     }
 
 
     public function createUser(Request $request)
     {
         $this->validate($request, [
-            'fullname' => 'required',
-            'email' => 'required',
-            'staff_id' => 'required',
+            'full_name' => 'required',
+            'phone_number' => 'required',
+            'email' => 'nullable|email',
         ]);
-        $exists = $this->user->isExist($request->input('email'), $request->input('staff_id'));
+        $exists = $this->user->isExist($request->input('phone_number'));
         if ($exists) {
-            return response()->json('User with email or ID exists already', 200);
+            return response()->json([ 'message'=> 'User with ID exists already'], 400);
         } else {
             $parameters = $request->all();
-            $this->user->createUser($parameters);
-            return response()->json('User Created Successfully', 200);
+            $result = $this->user->createUser($parameters);
+            if($result instanceof User){
+                $this->jwtService = new Auth\JwtAuthServices();
+                $token = $this->jwtService->init($result->uuid, $result->phone_number);
+                return response()->json(['user'=> $result, "token"=>$token, 'message'=>'Profile created Successfully'], 200);
+            }
+            return response()->json(['message' => "User Registration Failed!, {$result}"], 400);
         }
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('phone_number');
 
-        $response = $this->attemptLogin($credentials["email"], $credentials["password"]);
+        $response = $this->attemptLogin($credentials["phone_number"]);
         if ($response != false) {
-            return response()->json($response, 200);
+            return response()->json(["user"=>$response['user'], "token"=>$response['token'], "driver"=>$response['driver'], "vehicle"=>$response['vehicle']   ,"message"=>'success'], 200);
         } else {
-            return response()->json('Login Failed!, Email or Password incorrect', 401);
+            return response()->json([ "message"=>'Login Failed!, Incorrect credentials'], 400);
         }
     }
 
-    public function attemptLogin($username, $password)
+    public function attemptLogin($phone_number)
     {
-        $user = User::where('email', $username)->first();
-        if (!is_null($user) && Hash::check($password, $user->password)) {
+        $user = User::where('phone_number', $phone_number)->first();
+        if (!is_null($user) && Hash::check($phone_number, $user->password)) {
             $this->jwtService = new Auth\JwtAuthServices();
-            $token = $this->jwtService->init($user->uuid, $username);
-            $permissions = $this->permissions->getPermissions($user->id);
-            return ["user" => $user, "permissions"=>$permissions, "token" => $token];
+            $token = $this->jwtService->init($user->uuid, $phone_number);
+            $driverStatus =  $this->getUserDriverStatus($user->id);
+            return ["user" => $user, "token" => $token] +  $driverStatus;
+
         } else {
             return false;
         }
@@ -94,6 +74,23 @@ class AuthController extends Controller
     public function  allUsers(){
        $response =  $this->user->allUsers();
        return response()->json($response, 200);
+    }
+
+    public function getUserDriverStatus($userId){
+        $driver = $this->driver->getDriverByUserId($userId);
+
+        if($driver != null){
+            $vehicle = $this->getDriverVehicleInfo($driver->id);
+            return ["driver" => $driver, "vehicle" => $vehicle];
+        }
+        else{
+            return ["driver" => null, "vehicle" => null];
+        }
+    }
+
+
+    public function getDriverVehicleInfo($driverId){
+        return $this->vehicle->getVehicleByDriverId($driverId);
     }
 
 

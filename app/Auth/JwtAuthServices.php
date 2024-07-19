@@ -15,7 +15,7 @@ class  JwtAuthServices{
     public $config;
 
     public function initConfig(){
-        $this->config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText('!@pass?'));
+        $this->config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText('!@LfrtWYbF5uWb0GLWjwDigrMb722yJgAp2B3jDoYYRzYOSjIU3PHwRIpGSZlgaPassword123?'));
     }
 
     public function init($uniqueid,$username)

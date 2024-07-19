@@ -29,59 +29,32 @@ $router->group(['middleware' => ['jwt.auth'], 'prefix'=>'api/auth' ], function (
 /* Unauthenticated Routes */
 $router->group(['prefix'=>'api'], function () use ($router) {
     $router->post('user/create', 'AuthController@createUser');
-    $router->post('employee/create', 'EmployeesController@createEmployee');
-    $router->post('employee/update', 'EmployeesController@updateEmployee');
-    $router->post('login', 'AuthController@login');
+    $router->post('user/login', 'AuthController@login');
+    $router->post('otp/send', 'OtpController@sendOtp');
 
 
-    //TO BE ADDED TO AUTH ROUTES
-    $router->post('create-department', 'DepartmentController@createDepartment');
-    $router->get('all-departments', 'DepartmentController@allDepartments');
+    // DRIVER
+    $router->post('driver/create', 'DriverController@createDriver');
 
-    $router->get('all-categories', 'CategoryController@allCategories');
-    $router->post('create-category', 'CategoryController@createCategory');
-    $router->post('employees/upload', 'EmployeesController@uploadDocument');
+    // VEHICLE
+    $router->post('vehicle/create', 'VehicleController@createVehicle');
+
+    // RIDES
+    $router->post('ride/create', 'RideController@createRide');
+    $router->get('ride/{id}', 'RideController@getRides');
+    $router->put('ride/update', 'RideController@updateRide');
+    $router->get('ride/details/{id}', 'RideController@getRideDetails');
 
 
-    $router->post('recommendations/create', 'RecommendationsController@createRecommendation');
-    $router->get('recommendations/get/{period}', 'RecommendationsController@getRecommendations');
-    $router->post('recommendations/schedule', 'RecommendationsController@addRecommendationToSchedule');
+    //WALLET
 
-    $router->post('training-schedule/create', 'TrainingScheduleController@createSchedule');
-    $router->get('training-schedule/get/{period}', 'TrainingScheduleController@getSchedules');
-    $router->get('training-schedule/submitted/get/{period}', 'TrainingScheduleController@getSubmittedSchedules');
-    $router->post('training-schedule/submit/', 'TrainingScheduleController@submitSchedule');
-    $router->post('training-schedule/approved/create', 'TrainingScheduleController@createApprovedTraining');
-    $router->post('training-schedule/approve', 'TrainingScheduleController@approveSchedule');
-    $router->post('training-schedule/decline', 'TrainingScheduleController@declineSchedule');
-    $router->post('training-schedule/update', 'TrainingScheduleController@updateSchedule');
-    $router->get('training-schedule/approved/get/{period}', 'TrainingScheduleController@getApprovedSchedules');
-    $router->get('training-schedule/completed/get/{period}', 'TrainingScheduleController@getCompletedSchedules');
+    $router->post('wallet/create', 'WalletController@createVirtualAccount');
 
-    $router->post('nomination/create', 'NominationController@createNomination');
-    $router->get('nomination/all-nominations', 'NominationController@getNominations');
-    $router->get('nomination/nominations/{id}', 'NominationController@getNominationsById');
-    $router->post('nomination/nominations/approve', 'NominationController@approveNomination');
-    $router->post('nomination/nominations/decline', 'NominationController@declineNomination');
 
-    $router->get('nomination/nominations/nominees/{id}', 'NominationController@getNominee');
-    $router->post('nomination/participants/evaluate', 'NominationController@updateNominee');
-    $router->post('trainings/upload', 'TrainingController@uploadDocument');
 
-    $router->get('trainings/download/{id}', 'TrainingController@downloadFile');
 
-    $router->get('permissions/all', 'PermissionController@getSystemPermissions');
-    $router->get('permissions/user/{id}', 'PermissionController@getUserPermissions');
-    $router->post('permissions/create', 'PermissionController@createPermission');
 
-    $router->get('approvers/all', 'ApproversController@getApprovers');
-    $router->get('approvers/delete/{id}', 'ApproversController@removeApprover');
-    $router->post('approvers/create', 'ApproversController@createApprover');
 
-    $router->get('years/', 'YearsController@getYears');
-
-    $router->get('users', 'AuthController@allUsers');
-    $router->get('employees', 'EmployeesController@allEmployees');
 
 
 

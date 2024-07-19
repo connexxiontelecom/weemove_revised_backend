@@ -32,37 +32,43 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
-    public  function createUser(Array $parameters){
-        $user = new User;
-        $user->fullname = $parameters['fullname'];
-        $user->email = $parameters['email'];
-        $user->staff_id = $parameters['staff_id'];
-        $user->status = 1;
-        $user->usertype = 1;
-        //all users initially have a default password that must be changed
-        $plainPassword = "password1234";//$parameters['password'];
-        $user->password = '$2y$10$NzDrWAgnHPNNx6JC4mE3MOin55A/QR4WJvzT6tFGbeU45dOl/aTwm';//app('hash')->make($plainPassword);
-        $user->uuid = uniqid();
-        $user->save();
-        return $user;
+    public function createUser(array $parameters)
+    {
+        try {
+            $user = new User;
+            $user->fullname = $parameters['full_name'];
+            $user->email = $parameters['email'] ?? null;
+            $user->phone_number = $parameters['phone_number'];
+            $user->password = app('hash')->make($parameters['phone_number']);
+            $user->uuid = uniqid();
+            $user->save();
+            return $user;
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 
-    public function isExist($email, $staffId){
-        $exists = User::where("email", $email)->orWhere('staff_id', $staffId)->first();
+    public function isExist($phone)
+    {
+        $exists = User::where("phone_number", $phone)->first();
         if ($exists != null) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
+
+    public function getUserById($id)
+    {
+        return User::where("id", $id)->first();
+    }
+
+
     public function allUsers(){
         $users = User::all();
-        $permissions = new Permissions();
-        foreach ($users as $user){
-            $user->permissions = $permissions->getPermissions($user->id);
-        }
         return $users;
     }
+
+
 }

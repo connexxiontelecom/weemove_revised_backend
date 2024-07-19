@@ -13,26 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('otp', function (Blueprint $table) {
             $table->id();
-            $table->string('fullname')->nullable(false);
             $table->string('phone_number')->nullable(false);
-            $table->string('nin')->nullable();
-            $table->string('email')->nullable()->unique();
-            $table->string('uuid')->nullable(false);
-            $table->string('password')->nullable(false);
-            $table->rememberToken();
+            $table->string('code')->nullable(false);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *
      * @return void
      */
+
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('otp');
     }
+
 };
