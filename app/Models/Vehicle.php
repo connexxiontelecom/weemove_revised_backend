@@ -38,8 +38,11 @@ class Vehicle extends Model
 
     public function getVehicleByDriverId($driverId){
         $vehicle =  Vehicle::where('driver_id', $driverId)->first();
-        $vehicle->picture = url("/assets/uploads/images/" . $vehicle->picture);
-        return $vehicle;
+        if(!is_null($vehicle)){
+            $vehicle->picture = url("/assets/uploads/images/" . $vehicle->picture);
+            return $vehicle;
+        }
+       return null;
     }
 
     public function getVehicleById($id){
