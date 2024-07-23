@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    # - export DEPLOYPATH=/home/connexx1/public_html/
+    - export DEPLOYPATH=/home/connexx1/public_html/weemove_revised_backend
+    - /bin/cp -R * $DEPLOYPATH
